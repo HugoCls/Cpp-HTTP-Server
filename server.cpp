@@ -21,7 +21,6 @@ void Server::run()
     Route route1 = Route("/", [](const Request& req) -> Response {
         Response res;
 
-        // Page HTML avec référence à une feuille de style CSS externe
         std::string htmlContent = R"(
         <!DOCTYPE html>
         <html lang="en">
@@ -41,7 +40,6 @@ void Server::run()
         </html>
         )";
 
-        // Ajouter le contenu HTML à la réponse
         res.addHeader("Content-Type", "text/html");
         res.setBody(htmlContent);
 
@@ -66,6 +64,7 @@ void Server::run()
             res.setBody(imageData);
         } else {
             res.setStatus(404);
+            res.setStatusText("Not Found");
             res.setBody("Image not found.");
         }
 
@@ -80,8 +79,17 @@ void Server::run()
             res.setBody("Data received: " + req.getbody());
         } else {
             res.setStatus(405);
-            res.setBody("Method Not Allowed");
+            res.setStatusText("Method Not Allowed");
         }
+        return res;
+    });
+
+    // Route 4: Redirection vers la racine
+    Route routeRedirect = Route("/redirect", [](const Request& req) -> Response {
+        Response res;
+        res.setStatus(302);
+        res.setStatusText("Found");
+        res.addHeader("Location", "/");
         return res;
     });
 
@@ -100,6 +108,7 @@ void Server::run()
             res.setBody(faviconData);
         } else {
             res.setStatus(404);
+            res.setStatusText("Not Found");
             res.setBody("Favicon not found.");
         }
 
@@ -121,6 +130,7 @@ void Server::run()
             res.setBody(cssContent);
         } else {
             res.setStatus(404);
+            res.setStatusText("Not Found");
             res.setBody("CSS file not found.");
         }
 
@@ -151,17 +161,22 @@ void Server::run()
 			for (;;) // boucle infinie, tant que le client est connecté
 			{	
 				Request rq;
+                Response response;
 
 				if (!(stream >> rq)) {
-					break;
-				}
+                    response.setStatus(400);
+                    response.setStatusText("Bad request");
+                    std::cout << "Request received unreadable\n";
+                }
 				
-				Response response = router.serveRequest(rq);
+                else {
+                    response = router.serveRequest(rq);
+                    
+                    std::cout << "Request received:\n";
+                    std::cout << rq;
+                }
+				
 				stream << response.toString();
-
-				// Log dans la console les actions du server
-				std::cout << "Request received:\n";
-				std::cout << rq; // Echo de la requête (ou traitement)
 				std::cout << "\nResponse:\n";
 				std::cout << response.toString();
 				std::cout << "\n";
@@ -169,7 +184,15 @@ void Server::run()
 			}
 		}
 		catch(const std::exception& e)
-		{
+		{   
+            Response response;
+            response.setStatus(500);
+            response.setStatusText("Internal Server Error");
+            stream << response.toString();
+            std::cout << "\nResponse:\n";
+            std::cout << response.toString();
+            std::cout << "\n";
+
 			std::cerr << e.what() << '\n';
 		}
 		

@@ -1,0 +1,7 @@
+Les points les plus importants pour nous lors de ce TP ont été de comprendre quelle structure était attendue pour le projet (que fait le routeur, que fait le serveur et quel est son rapport avec le routeur)
+
+C'est pourquoi nous avons utilisé des fichiers annexes pour tester chaque élément indépendament.
+
+L'autre point marquant a été la création du parseur (l'opérateur istream  >>). La fonction getline a été un élément clé qu'il a fallu maitriser puisque les CRLF peuvent poser problème (\r ou \r\n).
+
+Finalement nous avons défini l'opérateur par étapes dans le parsing ce qui nous permet d'être certain de quelle partie de la requête nous sommes en train de parser. (si tenté qu'elle soit bien rédigée)

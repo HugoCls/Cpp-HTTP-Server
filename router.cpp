@@ -12,6 +12,6 @@ Response Router::serveRequest(const Request& request) const {
     }
     Response res;
     res.setStatus(404);
-    res.setBody("404 Not Found");
+    res.setStatusText("Not Found");
     return res;
 }
