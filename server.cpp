@@ -84,7 +84,7 @@ void Server::run()
         return res;
     });
 
-    // Route 4: Redirection vers la racine
+    // routeRedirect: Redirection vers la racine
     Route routeRedirect = Route("/redirect", [](const Request& req) -> Response {
         Response res;
         res.setStatus(302);
@@ -142,6 +142,7 @@ void Server::run()
     router.addRoute(&route1);
     router.addRoute(&route2);
     router.addRoute(&route3);
+    router.addRoute(&routeRedirect);
     router.addRoute(&routeFavicon);
     router.addRoute(&routeCss);
 
