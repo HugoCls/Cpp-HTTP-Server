@@ -100,7 +100,7 @@ while (step < Step::DONE) {
     
     if (line.size() == 0) {
     if (step == Step::HEADERS) {
-        switch (req.httpverb) {
+        switch (req.httpverb) { // Dans le cas de requêtes non POST/PUT, on passe directement à DONE (pas de lecture du BODY)
         case Request::verb::POST:
         case Request::verb::PUT:
             step +=1;
